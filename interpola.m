@@ -1,6 +1,6 @@
-%% Interpolation of Fragility Function
-%%% Written by: Hossein Ebrahimian
-%%% Last Update: 01/2019
+%%% Interpolation of Fragility Function
+%%% Written By: Hossein Ebrahimian, University of Naples Federico II (UNINA)
+%%% Laters Updated: 09/2022
 
 %% Main 
 

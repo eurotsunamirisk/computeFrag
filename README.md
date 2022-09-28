@@ -1,45 +1,42 @@
-# computeFrag
+Guide to accessing the empirical fragility calculation Code
 
-https://doi.org/10.5281/zenodo.5167276
+A code for computing empirical fragility curves based on generalized linear regression models. This code provides an ensemble of the fragility curves and their corresponding confidence bands for a set of mutually exclusive and collectively exhaustive (MECE) damage states. To use this code, you should cite the following manuscript:
 
-A code for computing empirical fragility curves based on logistic regression
+Jalayer, F., Ebrahimian, H., Trevlopoulos, K., and Bradley, B.: Empirical tsunami fragility modelling for hierarchical damage levels. EGUsphere, https://doi.org/10.5194/egusphere-2022-206, 2022.
 
+The parameters of the empirical fragilities associated with different damage level are estimated jointly using Bayesian inference by employing a Markov Chain Monte Carlo Simulation (MCMC) scheme.
 
+The inputs of the code that should be entered in the main file “main_script_Bayesian_fragility_model.m” are the following:
 
-This code provides an ensemble of the fragility curves and their corresponding confidence bands for a set of mutually exclusive and collectively exhaustive (MECE) damage states (DS), where DSi: i=0,NDS. The fragility is defined as the probability of damage D exceeding the threshold Di for damage state DSi and is denoted as P(D>Di|IM).  The set of damage levels (Di, i=0:NDS) mark the thresholds of damage states (DSi). 
+Filename: The filename of a csv file containing two columns, one for the intensity measure and one for the damage state. 
 
-The parameters of the empirical fragilities associated with different damage level are estimated jointly using Bayesian inference by employing a Markov Chain Monte Carlo Simulation (MCMC) scheme. 
+output_folder: The folder that the outputs will be stored.
 
+excel_filename: The name of the Excel file name for storing the fragility data. 
 
-
-The inputs of the code are the following:
-
-inputFileName: The filename of a csv file containing two columns, one for the intensity measure and one for the damage state. In this example, it is the file IM_and_DS.csv.
-
-NDS: The number of the damage states.
-
-dIM, IM_max: The step and the maximum absolute value for the IM vector.
+D: Definition of the damage levels (e.g. 0:2 showing that we have 3 damage levels 0, 1 and 2).
 
 dvec_alpha0, dvec_alpha1: The increments of the vectors of the two logistic regression parameters.
 
-confid: The number of standard deviations defining the confidence interval for the robust fragility (fixed for all the DS).
+do_MCMC_M1:   Perform MCMC for fragility model 1 (for the models, please see the corresponding paper) (if =0, do not perform MCMC and read MCMC data from output_folder; if =1, do MCMC)
 
+do_MCMC_M2:   Perform MCMC for fragility model 2 (for the models, please see the corresponding paper) (if =0, do not perform MCMC and read MCMC data from output_folder; if =1, do MCMC)
 
+do_MCMC_M3:   Perform MCMC for fragility model 3 (for the models, please see the corresponding paper) (if =0, do not perform MCMC and read MCMC data from output_folder; if =1, do MCMC)
 
-The outputs of the code are the following:
+COVprior_M1: Coefficient of variation for the prior parameters of model 1 (please see the corresponding paper) 
 
-sample_theta_model: Ns=500 samples generated from the posterior joint probability distribution for logistic fragility model parameters (e.g., a total of 10 parameters for 5 DS, 2 parameters/DS) using the MCMC procedure. 
+COVprior_M2: Coefficient of variation for the prior parameters of model 2 (please see the corresponding paper) 
 
-rfragility: Robust (the mean fragility among the Ns=500 realizations for each DS) fragility curve with the row showing the IM vector and a number of columns equal to the number of DS.
+COVprior_M3: Coefficient of variation for the prior parameters of model 3 (please see the corresponding paper) 
 
-sfragility: The standard deviation of the Ns=500 fragility curve samples (the same structure as rfragility). For having the fragility with a confidence, you should do this operation: rfragility+confid*sfragility (e.g., if confid=±1, we have 16th and 84th percentiles, if confid=±2, we have 2nd and 98th percentiles).
+dIM, IM_max: The step and the maximum absolute value for the IM vector.
 
-etaIMc: The median of rfragility (i.e., the IM value corresponding to 50% probability from rfragility). It is a vector with its length equal to the number of DS.
+confidence: The number of standard deviations defining the confidence interval for the robust fragility (fixed for all the DS).
 
-betaIMc: The equivalent logarithmic standard deviation of the rfragility (i.e., half of the logarithmic distance between IM values corresponding to 84% and 16% probabilities, respectively). It is a vector with its length equal to the number of DS.
+do_modelClassSelection: if =0, do not perform model class selection; if =1, do model class selection (please see the corresponding paper) 
 
+The outputs of the code are stored in the excel files defined by the name excel_filename. 
 
-
-To execute the code, run the script computeFrag.py.
-
-Requirements: MATLAB, numpy, pandas
+The output format is described in the file ReadMe file for fragility data.pdf in
+https://github.com/eurotsunamirisk/etris_data_and_data_products/tree/main/etris_data_products/Fragility_Curves 
