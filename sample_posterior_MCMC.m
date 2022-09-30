@@ -1,6 +1,4 @@
-%%% MCMC procedure 
-%%% Written By: Hossein Ebrahimian, University of Naples Federico II (UNINA)
-%%% Laters Updated: 09/2022
+%% MCMC procedure 
 
 function [THETA,accept] = sample_posterior_MCMC(THETA,rank,proposalPDF,proposalPDF_par,priorPDF,priorPDF_par,likelihoodFunction,data)
 
@@ -29,11 +27,10 @@ elseif strcmp(proposalPDF,'uniform')
     
 elseif strcmp(proposalPDF,'kernel')     
     
-    seeds     = proposalPDF_par{1,1}(rank,:);
-    weights   = proposalPDF_par{1,2};
-    new_theta = sampleTheta_kernel(seeds,weights);
-    proposal_ratio = calculateKernel(theta,seeds,weights)/calculateKernel(new_theta,seeds,weights);
-    
+    psample   = proposalPDF_par;
+    new_theta = psample.random;
+    proposal_ratio = ksdensity(psample.InputData.data,theta,'function','pdf')/ksdensity(psample.InputData.data,new_theta,'function','pdf');
+
 end
 
 %% calculate the ratio of priors
@@ -53,17 +50,25 @@ elseif strcmp(priorPDF,'lognormal')
 elseif strcmp(priorPDF,'uniform')
     
     ratioPrior     = 1.0;
-
+    
+elseif strcmp(priorPDF,'kernel')
+  
+    ratioPrior     = ksdensity(priorPDF_par.InputData.data,new_theta,'function','pdf')/ksdensity(priorPDF_par.InputData.data,theta,'function','pdf');
+    
 end
 
 %% calculate the likelihood function 
 
 THETA(rank) = new_theta;
-[Likelihoodnew,logLikelihoodnew] = likelihoodFunction(data(1:end-1),THETA,data(end));
+%Likelihoodnew = likelihoodFunction(data,THETA);
+[Likelihoodnew,logLikelihoodnew] = likelihoodFunction(data,THETA);
 THETA(rank) = theta;
-[Likelihood,logLikelihood]       = likelihoodFunction(data(1:end-1),THETA,data(end));
+%Likelihood    = likelihoodFunction(data,THETA);
+[Likelihood,logLikelihood]      = likelihoodFunction(data,THETA);
 
 %% calculate the acceptance probability
+
+%pratio =  (Likelihoodnew/Likelihood)*ratioPrior;
 
 if (isnan(Likelihoodnew/Likelihood) || Likelihoodnew/Likelihood==0)
     pratio =  exp(logLikelihoodnew-logLikelihood)*ratioPrior;

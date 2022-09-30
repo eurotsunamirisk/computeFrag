@@ -1,30 +1,18 @@
-%%%   Script for calculating the Robust Fragility for empirical fragility estimation and its confidence band 
-%%% Written By: Hossein Ebrahimian, University of Naples Federico II (UNINA)
-%%% Laters Updated: 09/2022
+%   ----------------------------------------------------------------------
+%   Script for calculating the Robust Fragility and its confidence band 
+%   -----------------------------------------------------------------------
+%   Date: July 2021
+%   Writen by: Hossein Ebrahimian
 
-function RF = RobustFragility_DS(sample_theta,x,NDS,confidence,GRM,tol)
+function RF = RobustFragility_DS(sample_theta,x,NDS,confidence,GRM)
 
 %% Sampling Procedure
 
-sample_fragility = cell(1,1);
-sample_PDS_IM    = cell(1,1);
-dummy = [];
-dstep = 5;
+sample_fragility = cell(1,size(sample_theta,2));
 
-count=0;
 for i=1:size(sample_theta,2)
-    [dummy_fragility,dummy_PDS] = calculate_fragility(x',sample_theta(:,i),NDS,GRM);
-    if ( any(any(diff(dummy_fragility(1:dstep:length(x),:))<tol)>0) || any(dummy_fragility(1,:)>0.01) ) 
-        dummy = [dummy,i];
-    else
-        count=count+1;
-        sample_fragility{1,count} = dummy_fragility;
-        sample_PDS_IM{1,count} = cell2mat(dummy_PDS);
-    end
+    sample_fragility{1,i} = calculate_fragility(x',sample_theta(:,i),NDS,GRM);
 end
-
-rejected_samples = dummy;
-sample_theta(:,rejected_samples) = [];
 
 %% Calculate the Robust Fragility and its standard deviation
 
@@ -37,7 +25,8 @@ for j=1:NDS
     for i=1:size(sample_theta,2)
         sample_fragility_DSj{1,j}(:,i) = sample_fragility{1,i}(:,j);
     end
-    [Rfragility(:,j),sfragility(:,j)] = calculate_Robust_Reliability(sample_fragility_DSj{1,j});
+    Rfragility(:,j) = mean(sample_fragility_DSj{1,j},2);
+    sfragility(:,j) = std(sample_fragility_DSj{1,j},1,2);
 end
 
 %% Save
@@ -48,28 +37,21 @@ RF.fragility            = Rfragility;
 RF.sfragility           = sfragility;
 RF.sample_fragility     = sample_fragility;
 RF.sample_fragility_DSj = sample_fragility_DSj;
-RF.rejected_samples     = rejected_samples;
-RF.sample_theta         = sample_theta;
 
-RF.RFp = Rfragility+confidence*sfragility;
-RF.RFm = Rfragility-confidence*sfragility;
-
-RF.RF84 = Rfragility+sfragility;
-RF.RF16 = Rfragility-sfragility;
+RF.RFp84 = Rfragility+confidence*sfragility;
+RF.RFp16 = Rfragility-confidence*sfragility;
 
 for j=1:NDS
-    RF.etaIMc(j)= interpola(Rfragility(:,j),x,0.50);
-    RF.IMc16(j) = interpola(Rfragility(:,j),x,normcdf(-1.0));
-    RF.IMc84(j) = interpola(Rfragility(:,j),x,normcdf(1.0));
+    RF.etaIMpl(j) = interpola(Rfragility(:,j),x,0.50);
+    RF.IMp16(j)   = interpola(Rfragility(:,j),x,normcdf(-1.0));
+    RF.IMp84(j)   = interpola(Rfragility(:,j),x,normcdf(1.0));
     
-    RF.etaIMc_RF84(j) = interpola(RF.RF84(:,j),x,0.50);
-    RF.etaIMc_RF16(j) = interpola(RF.RF16(:,j),x,0.50);
+    RF.etaIM_RFp84(j) = interpola(RF.RFp84(:,j),x,0.50);
+    RF.etaIM_RFp16(j) = interpola(RF.RFp16(:,j),x,0.50);
 end
 
-RF.betaIMc = 0.5*log(RF.IMc84./RF.IMc16);
-RF.betaUF  = 0.5*log(RF.etaIMc_RF16./RF.etaIMc_RF84);
-
-RF.sample_PDS_IM = sample_PDS_IM;
+RF.betaIMpl = 0.5*log(RF.IMp84./RF.IMp16);
+RF.betaUF   = 0.5*log(RF.etaIM_RFp16./RF.etaIM_RFp84);
 
 end
 
