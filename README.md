@@ -5,11 +5,13 @@
 <br>
 
 **https://doi.org/10.5281/zenodo.5167276**
-
+<br>
+<br>
 <p align="center">
   <img src="https://github.com/soltanisgeo/readme/blob/main/damageScale-git.png" />
 </p>
-######Graphical representation of damage thresholds, D, and damage states, DS
+
+###### Graphical representation of damage thresholds, D, and damage states, DS
 
 <br>
 <br>
