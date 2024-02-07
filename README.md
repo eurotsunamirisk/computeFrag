@@ -42,6 +42,7 @@ The parameters of the empirical fragilities associated with different damage lev
 <br>
 ### To execute the code, run the script computeFrag.py
 <br>
+
 **Requirements:** MATLAB, numpy, pandas
 <br>
 <br>
