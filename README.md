@@ -1,7 +1,7 @@
 # ComputeFrag
 <br>
 
-**A code for computing empirical fragility curves based on logistic regression**
+## A code for computing empirical fragility curves based on logistic regression
 <br>
 **https://doi.org/10.5281/zenodo.5167276**
 
