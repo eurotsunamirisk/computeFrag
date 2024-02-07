@@ -24,4 +24,4 @@ The parameters of the empirical fragilities associated with different damage lev
 <br>**do_modelClassSelection:** if =0, do not perform model class selection; if =1, do model class selection (please see the corresponding paper) 
 
 ### The outputs of the code are stored in the excel files defined by the name _excel_filename_. 
-**The output format is described in the file [ReadMe file for fragility data](https://github.com/soltanisgeo/readme/blob/main/README-FragilityData.md)**
+**The output format is described in the file [ReadMe file for fragility data](https://github.com/soltanisgeo/readme/blob/main/README.md)**
